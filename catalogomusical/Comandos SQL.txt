@@ -1,0 +1,34 @@
+--Criando DB catalogo_musical
+
+CREATE DATABASE catalogo_musical;
+USE catalogo_musical;
+
+
+--Criando tabela musica
+CREATE TABLE musica (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(100) NOT NULL,
+    duracao VARCHAR(10) NOT NULL,
+    album VARCHAR(100),
+    artista VARCHAR(100) NOT NULL
+);
+
+
+--Criando tabela artista
+CREATE TABLE artista (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    genero VARCHAR(50),
+    pais_origem VARCHAR(50),
+    ano_estreia INT
+);
+
+
+----Criando tabela playlist
+CREATE TABLE playlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    criador VARCHAR(100),
+    data_criacao DATE,
+    quantidade_musicas INT DEFAULT 0
+);
