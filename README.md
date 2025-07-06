@@ -1,4 +1,4 @@
-#Catálogo Musical - Java Swing + MySQL
+# Catálogo Musical - Java Swing + MySQL
 
 Este projeto implementa uma aplicação desktop utilizando **Java Swing** com conexão a banco de dados **MySQL**. A aplicação possui janelas independentes (via `JFrame`) para gerenciamento de:
 
