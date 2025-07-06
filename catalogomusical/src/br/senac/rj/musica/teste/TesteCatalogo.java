@@ -1,6 +1,6 @@
 package br.senac.rj.musica.teste;
 
-import br.senac.rj.musica.janelas.JanelaConta;
+import br.senac.rj.musica.window.JanelaConta;
 import br.senac.rj.musica.modelo.Conexao;
 import br.senac.rj.musica.modelo.Conta;
 import br.senac.rj.musica.modelo.ContaCorrenteNormal;
@@ -60,4 +60,3 @@ public class TesteCatalogo {
 			}
 	}
 
-}

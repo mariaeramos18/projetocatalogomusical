@@ -1,4 +1,4 @@
-package br.senac.rj.musica.janelas;
+package br.senac.rj.musica.window;
 
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import br.senac.rj.banco.modelo.ContaCorrenteNormal;
+import br.senac.rj.musica.modelo.ContaCorrenteNormal;
 
 public class JanelaConta {
 	public static JFrame criarJanelaConta() {
