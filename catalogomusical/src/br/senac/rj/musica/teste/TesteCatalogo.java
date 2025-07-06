@@ -22,7 +22,7 @@ public class TesteCatalogo {
 				//Define a janela
 				JFrame janelaPrincipal = new JFrame("Cadastro de conta");
 				janelaPrincipal.setTitle("Gestão bancária");
-				janelaPrincipal.setResizable(false);// A janela ão poderá ter o tamanho ajustado
+				janelaPrincipal.setResizable(false);// A janela não poderá ter o tamanho ajustado
 				janelaPrincipal.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				janelaPrincipal.setSize(400,300); //Define tamanho da janela
 				UIManager.put("OptionPane.yesButtonText", "Sim");
