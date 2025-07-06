@@ -19,8 +19,8 @@ CREATE TABLE artista (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     genero VARCHAR(50),
-    pais_origem VARCHAR(50),
-    ano_estreia INT
+    nascionalidade VARCHAR(50),
+    generomusical VARCHAR(20)
 );
 
 
@@ -28,7 +28,7 @@ CREATE TABLE artista (
 CREATE TABLE playlist (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    criador VARCHAR(100),
+    descricao VARCHAR(100),
     data_criacao DATE,
-    quantidade_musicas INT DEFAULT 0
+    estilo VARCHAR(20)
 );
