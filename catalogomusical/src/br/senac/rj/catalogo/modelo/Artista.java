@@ -10,7 +10,7 @@ public class Artista {
     private String nome;
     private String nacionalidade;
     private String genero;
-    private String dataNascimento;
+    private String generoMusical;
 
     // Getters e Setters
     public int getId() {
@@ -29,8 +29,8 @@ public class Artista {
         return genero;
     }
 
-    public String getDataNascimento() {
-        return dataNascimento;
+    public String getGeneroMusical() {
+        return generoMusical;
     }
 
     public void setNome(String nome) {
@@ -45,30 +45,34 @@ public class Artista {
         this.genero = genero;
     }
 
-    public void setDataNascimento(String dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setGeneroMusical(String generoMusical) {
+        this.generoMusical = generoMusical;
     }
 
     // Método para cadastrar artista
-    public boolean cadastrarArtista(String nome, String nacionalidade, String genero, String dataNascimento) {
+    public boolean cadastrarArtista(String nome, String nacionalidade, String generoMusical, String genero) {
         Connection conexao = null;
         try {
             conexao = Conexao.conectaBanco();
-            String sql = "INSERT INTO artista (nome, nacionalidade, genero, data_nascimento) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO artista (nome, nacionalidade, generomusical, genero) VALUES (?, ?, ?, ?)";
+
             PreparedStatement ps = conexao.prepareStatement(sql);
-            ps.setString(1, nome);
-            ps.setString(2, nacionalidade);
-            ps.setString(3, genero);
-            ps.setString(4, dataNascimento);
-            int resultado = ps.executeUpdate();
-            return resultado > 0;
-        } catch (SQLException e) {
-            System.out.println("Erro ao cadastrar artista: " + e.toString());
+            ps.setString(1, nome.trim());
+            ps.setString(2, nacionalidade.trim());
+            ps.setString(3, generoMusical.trim());
+            ps.setString(4, genero.trim());
+
+            int linhasAfetadas = ps.executeUpdate();
+            return linhasAfetadas > 0;
+
+        } catch (SQLException erro) {
+            System.out.println("Erro ao cadastrar artista: " + erro.toString());
             return false;
         } finally {
             Conexao.fechaConexao(conexao);
         }
     }
+
 
     // Método para consultar artista por ID
     public boolean consultarArtista(int id) {
@@ -83,8 +87,8 @@ public class Artista {
                 this.id = rs.getInt("id");
                 this.nome = rs.getString("nome");
                 this.nacionalidade = rs.getString("nacionalidade");
+                this.generoMusical = rs.getString("generomusical");
                 this.genero = rs.getString("genero");
-                this.dataNascimento = rs.getString("data_nascimento");
                 return true;
             } else {
                 return false;
@@ -98,16 +102,16 @@ public class Artista {
     }
 
     // Método para atualizar artista
-    public boolean atualizarArtista(int id, String nome, String nacionalidade, String genero, String dataNascimento) {
+    public boolean atualizarArtista(int id, String nome, String nacionalidade, String generomusical, String genero) {
         Connection conexao = null;
         try {
             conexao = Conexao.conectaBanco();
-            String sql = "UPDATE artista SET nome=?, nacionalidade=?, genero=?, data_nascimento=? WHERE id=?";
+            String sql = "UPDATE artista SET nome=?, nacionalidade=?, generoMusical=?, genero=? WHERE id=?";
             PreparedStatement ps = conexao.prepareStatement(sql);
             ps.setString(1, nome);
             ps.setString(2, nacionalidade);
-            ps.setString(3, genero);
-            ps.setString(4, dataNascimento);
+            ps.setString(3, generomusical);
+            ps.setString(4, genero);
             ps.setInt(5, id);
             int resultado = ps.executeUpdate();
             return resultado > 0;
