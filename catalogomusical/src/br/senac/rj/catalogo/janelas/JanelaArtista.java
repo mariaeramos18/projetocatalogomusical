@@ -1,7 +1,6 @@
 package br.senac.rj.catalogo.janelas;
 
 import br.senac.rj.catalogo.modelo.Artista;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +11,7 @@ public class JanelaArtista {
         JFrame janela = new JFrame("Gerenciamento de Artistas");
         janela.setResizable(false);
         janela.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        janela.setSize(450, 320);
+        janela.setSize(500, 350);
 
         Container caixa = janela.getContentPane();
         caixa.setLayout(null);
@@ -45,16 +44,20 @@ public class JanelaArtista {
 
         // Botões
         JButton botaoConsultar = new JButton("Consultar");
-        JButton botaoGravar = new JButton("Gravar");
+        JButton botaoCadastrar = new JButton("Cadastrar");
+        JButton botaoAtualizar = new JButton("Atualizar");
         JButton botaoExcluir = new JButton("Excluir");
         JButton botaoLimpar = new JButton("Limpar");
 
         botaoConsultar.setBounds(280, 30, 100, 20);
-        botaoGravar.setBounds(30, 200, 100, 30);
-        botaoExcluir.setBounds(160, 200, 100, 30);
-        botaoLimpar.setBounds(290, 200, 100, 30);
+        botaoCadastrar.setBounds(30, 220, 100, 30);
+        botaoAtualizar.setBounds(140, 220, 100, 30);
+        botaoExcluir.setBounds(250, 220, 100, 30);
+        botaoLimpar.setBounds(360, 220, 100, 30);
 
-        botaoGravar.setEnabled(false);
+        // Estado inicial dos botões
+        botaoCadastrar.setEnabled(false);
+        botaoAtualizar.setEnabled(false);
         botaoExcluir.setEnabled(false);
 
         // Adiciona componentes
@@ -71,117 +74,174 @@ public class JanelaArtista {
         janela.add(jTextGenero);
 
         janela.add(botaoConsultar);
-        janela.add(botaoGravar);
+        janela.add(botaoCadastrar);
+        janela.add(botaoAtualizar);
         janela.add(botaoExcluir);
         janela.add(botaoLimpar);
 
         // Objeto Artista
         Artista artista = new Artista();
 
-        // Ações dos botões
+        // CONSULTAR
         botaoConsultar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int id = Integer.parseInt(jTextId.getText()); // Obtenha o ID do campo de texto
+                    int id = Integer.parseInt(jTextId.getText());
                     if (artista.consultarArtista(id)) {
                         jTextNome.setText(artista.getNome());
                         jTextNacionalidade.setText(artista.getNacionalidade());
                         jTextGeneroMusical.setText(artista.getGeneroMusical());
                         jTextGenero.setText(artista.getGenero());
 
-                        botaoGravar.setEnabled(true);
+                        botaoAtualizar.setEnabled(true);
                         botaoExcluir.setEnabled(true);
+                        botaoCadastrar.setEnabled(false);
+                        botaoLimpar.setEnabled(true);
+                        habilitarCampos(true, jTextNome, jTextNacionalidade, jTextGeneroMusical, jTextGenero);
                         jTextId.setEnabled(false);
                     } else {
-                        JOptionPane.showMessageDialog(janela, "Artista não encontrado. Cadastre abaixo.");
-                        jTextNome.setText("");
-                        jTextNacionalidade.setText("");
-                        jTextGeneroMusical.setText("");
-                        jTextGenero.setText("");
-                        botaoGravar.setEnabled(true);
+                        JOptionPane.showMessageDialog(janela, "Artista não encontrado. Preencha os dados para cadastrar.");
+                        limparCampos(jTextNome, jTextNacionalidade, jTextGeneroMusical, jTextGenero);
+                        botaoCadastrar.setEnabled(true);
+                        botaoAtualizar.setEnabled(false);
                         botaoExcluir.setEnabled(false);
+                        botaoLimpar.setEnabled(true);
+                        habilitarCampos(true, jTextNome, jTextNacionalidade, jTextGeneroMusical, jTextGenero);
                     }
-
-                    jTextNome.setEnabled(true);
-                    jTextNacionalidade.setEnabled(true);
-                    jTextGeneroMusical.setEnabled(true);
-                    jTextGenero.setEnabled(true);
-                    jTextNome.requestFocus();
-
                     botaoConsultar.setEnabled(false);
-                } catch (Exception erro) {
-                    JOptionPane.showMessageDialog(janela, "ID inválido.");
+                    jTextNome.requestFocus();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(janela, "ID inválido. Digite um número inteiro.");
                 }
             }
         });
 
-        botaoGravar.addActionListener(new ActionListener() {
+        // CADASTRAR
+        botaoCadastrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int resposta = JOptionPane.showConfirmDialog(janela, "Deseja salvar as informações?", "Confirmação",
-                        JOptionPane.YES_NO_OPTION);
-                if (resposta == JOptionPane.YES_OPTION) {
-                    int id = Integer.parseInt(jTextId.getText());
-                    String nome = jTextNome.getText().trim();
-                    String nacionalidade = jTextNacionalidade.getText().trim();
-                    String generoMusical = jTextGeneroMusical.getText().trim();
-                    String genero = jTextGenero.getText().trim();
+                if (validarCampos()) {
+                    int resposta = JOptionPane.showConfirmDialog(janela,
+                            "Confirmar cadastro deste artista?", "Confirmação", JOptionPane.YES_NO_OPTION);
 
-                    if (nome.isEmpty()) {
-                        JOptionPane.showMessageDialog(janela, "Preencha o nome do artista.");
-                        return;
-                    }
+                    if (resposta == JOptionPane.YES_OPTION) {
+                        int id = Integer.parseInt(jTextId.getText());
+                        String nome = jTextNome.getText().trim();
+                        String nacionalidade = jTextNacionalidade.getText().trim();
+                        String generoMusical = jTextGeneroMusical.getText().trim();
+                        String genero = jTextGenero.getText().trim();
 
-                    if (!artista.consultarArtista(id)) {
-                        if (artista.cadastrarArtista(id, nome, nacionalidade, generoMusical, genero))
-                            JOptionPane.showMessageDialog(janela, "Artista cadastrado com sucesso.");
-                        else
-                            JOptionPane.showMessageDialog(janela, "Erro ao cadastrar artista.");
-                    } else {
-                        if (artista.atualizarArtista(id, nome, nacionalidade, generoMusical, genero))
-                            JOptionPane.showMessageDialog(janela, "Artista atualizado com sucesso.");
-                        else
-                            JOptionPane.showMessageDialog(janela, "Erro ao atualizar artista.");
+                        if (artista.cadastrarArtista(id, nome, nacionalidade, generoMusical, genero)) {
+                            JOptionPane.showMessageDialog(janela, "Artista cadastrado com sucesso!");
+                            limparTudo(jTextId, jTextNome, jTextNacionalidade, jTextGeneroMusical, jTextGenero,
+                                    botaoConsultar, botaoCadastrar, botaoAtualizar, botaoExcluir);
+                        } else {
+                            JOptionPane.showMessageDialog(janela, "Falha ao cadastrar artista.");
+                        }
                     }
                 }
             }
         });
 
+        // ATUALIZAR
+        botaoAtualizar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (validarCampos()) {
+                    int resposta = JOptionPane.showConfirmDialog(janela,
+                            "Confirmar atualização deste artista?", "Confirmação", JOptionPane.YES_NO_OPTION);
+
+                    if (resposta == JOptionPane.YES_OPTION) {
+                        int id = Integer.parseInt(jTextId.getText());
+                        String nome = jTextNome.getText().trim();
+                        String nacionalidade = jTextNacionalidade.getText().trim();
+                        String generoMusical = jTextGeneroMusical.getText().trim();
+                        String genero = jTextGenero.getText().trim();
+
+                        if (artista.atualizarArtista(id, nome, nacionalidade, generoMusical, genero)) {
+                            JOptionPane.showMessageDialog(janela, "Artista atualizado com sucesso!");
+                            limparTudo(jTextId, jTextNome, jTextNacionalidade, jTextGeneroMusical, jTextGenero,
+                                    botaoConsultar, botaoCadastrar, botaoAtualizar, botaoExcluir);
+                        } else {
+                            JOptionPane.showMessageDialog(janela, "Falha ao atualizar artista.");
+                        }
+                    }
+                }
+            }
+        });
+
+        // EXCLUIR
         botaoExcluir.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int resposta = JOptionPane.showConfirmDialog(janela, "Deseja excluir o artista?", "Confirmação",
-                        JOptionPane.YES_NO_OPTION);
+                int resposta = JOptionPane.showConfirmDialog(janela,
+                        "Confirmar exclusão deste artista?", "Confirmação", JOptionPane.YES_NO_OPTION);
+
                 if (resposta == JOptionPane.YES_OPTION) {
                     int id = Integer.parseInt(jTextId.getText());
-                    if (artista.excluirArtista(id))
-                        JOptionPane.showMessageDialog(janela, "Artista excluído com sucesso.");
-                    else
-                        JOptionPane.showMessageDialog(janela, "Erro ao excluir artista.");
-                    botaoExcluir.setEnabled(false);
+                    if (artista.excluirArtista(id)) {
+                        JOptionPane.showMessageDialog(janela, "Artista excluído com sucesso!");
+                        limparTudo(jTextId, jTextNome, jTextNacionalidade, jTextGeneroMusical, jTextGenero,
+                                botaoConsultar, botaoCadastrar, botaoAtualizar, botaoExcluir);
+                    } else {
+                        JOptionPane.showMessageDialog(janela, "Falha ao excluir artista.");
+                    }
                 }
             }
         });
 
+        // LIMPAR
         botaoLimpar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                jTextId.setText("");
-                jTextNome.setText("");
-                jTextNacionalidade.setText("");
-                jTextGeneroMusical.setText("");
-                jTextGenero.setText("");
-
-                jTextId.setEnabled(true);
-                jTextNome.setEnabled(false);
-                jTextNacionalidade.setEnabled(false);
-                jTextGeneroMusical.setEnabled(false);
-                jTextGenero.setEnabled(false);
-
-                botaoConsultar.setEnabled(true);
-                botaoGravar.setEnabled(false);
-                botaoExcluir.setEnabled(false);
+                limparTudo(jTextId, jTextNome, jTextNacionalidade, jTextGeneroMusical, jTextGenero,
+                        botaoConsultar, botaoCadastrar, botaoAtualizar, botaoExcluir);
             }
         });
 
         return janela;
     }
+
+    // Métodos auxiliares
+    private static void limparCampos(JTextField nome, JTextField nacionalidade,
+                                     JTextField generoMusical, JTextField genero) {
+        nome.setText("");
+        nacionalidade.setText("");
+        generoMusical.setText("");
+        genero.setText("");
+    }
+
+    private static void habilitarCampos(boolean habilitar, JTextField nome, JTextField nacionalidade,
+                                        JTextField generoMusical, JTextField genero) {
+        nome.setEnabled(habilitar);
+        nacionalidade.setEnabled(habilitar);
+        generoMusical.setEnabled(habilitar);
+        genero.setEnabled(habilitar);
+    }
+
+    private static void limparTudo(JTextField id, JTextField nome, JTextField nacionalidade,
+                                   JTextField generoMusical, JTextField genero,
+                                   JButton consultar, JButton cadastrar, JButton atualizar, JButton excluir) {
+        id.setText("");
+        nome.setText("");
+        nacionalidade.setText("");
+        generoMusical.setText("");
+        genero.setText("");
+
+        id.setEnabled(true);
+        nome.setEnabled(false);
+        nacionalidade.setEnabled(false);
+        generoMusical.setEnabled(false);
+        genero.setEnabled(false);
+
+        consultar.setEnabled(true);
+        cadastrar.setEnabled(false);
+        atualizar.setEnabled(false);
+        excluir.setEnabled(false);
+
+        id.requestFocus();
+    }
+
+    private static boolean validarCampos() {
+        // Aqui você pode adicionar validações reais no futuro
+        return true;
+    }
 }
+
 
