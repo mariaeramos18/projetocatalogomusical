@@ -75,20 +75,24 @@ public class Playlist {
     }
 
     // Cadastrar
-    public boolean cadastrarPlaylist(String nome, String descricao, String dataCriacao, String estilo) {
+    public boolean cadastrarPlaylist(int id, String nome, String descricao, String dataCriacao, String estilo) {
         Connection conexao = null;
         try {
             conexao = Conexao.conectaBanco();
-            String sql = "INSERT INTO playlist (nome, descricao, data_criacao, estilo) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO playlist (id, nome, descricao, data_criacao, estilo) VALUES (?, ?, ?, ?, ?)";
+            
             PreparedStatement ps = conexao.prepareStatement(sql);
-            ps.setString(1, nome);
-            ps.setString(2, descricao);
-            ps.setString(3, dataCriacao);
-            ps.setString(4, estilo);
-            int totalAfetado = ps.executeUpdate();
-            return totalAfetado > 0;
+            ps.setInt(1, id);
+            ps.setString(2, nome.trim());
+            ps.setString(3, descricao.trim());
+            ps.setString(4, dataCriacao.trim());
+            ps.setString(5, estilo.trim());
+
+            int linhasAfetadas = ps.executeUpdate();
+            return linhasAfetadas > 0;
+
         } catch (SQLException erro) {
-            System.out.println("Erro ao cadastrar playlist: " + erro);
+            System.out.println("Erro ao cadastrar playlist: " + erro.toString());
             return false;
         } finally {
             Conexao.fechaConexao(conexao);
@@ -131,6 +135,22 @@ public class Playlist {
             return totalAfetado > 0;
         } catch (SQLException erro) {
             System.out.println("Erro ao excluir playlist: " + erro);
+            return false;
+        } finally {
+            Conexao.fechaConexao(conexao);
+        }
+    }
+ // Na classe Playlist
+    public boolean existePlaylist(int id) {
+        Connection conexao = null;
+        try {
+            conexao = Conexao.conectaBanco();
+            String sql = "SELECT id FROM playlist WHERE id = ?";
+            PreparedStatement ps = conexao.prepareStatement(sql);
+            ps.setInt(1, id);
+            return ps.executeQuery().next();
+        } catch (SQLException e) {
+            System.out.println("Erro ao verificar playlist: " + e.toString());
             return false;
         } finally {
             Conexao.fechaConexao(conexao);

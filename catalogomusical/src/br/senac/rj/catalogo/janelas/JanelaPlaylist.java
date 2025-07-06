@@ -112,26 +112,42 @@ public class JanelaPlaylist {
             public void actionPerformed(ActionEvent e) {
                 int resposta = JOptionPane.showConfirmDialog(janela, "Deseja salvar os dados?", "Confirmação", JOptionPane.YES_NO_OPTION);
                 if (resposta == JOptionPane.YES_OPTION) {
-                    int id = txtId.getText().isEmpty() ? -1 : Integer.parseInt(txtId.getText());
-                    String nome = txtNome.getText();
-                    String descricao = txtDescricao.getText();
-                    String data = txtData.getText();
-                    String estilo = txtEstilo.getText();
+                    try {
+                        if (txtId.getText().isEmpty()) {
+                            JOptionPane.showMessageDialog(janela, "O ID é obrigatório.");
+                            return;
+                        }
+                        
+                        int id = Integer.parseInt(txtId.getText());
+                        String nome = txtNome.getText();
+                        String descricao = txtDescricao.getText();
+                        String data = txtData.getText();
+                        String estilo = txtEstilo.getText();
 
-                    if (nome.isEmpty()) {
-                        JOptionPane.showMessageDialog(janela, "Preencha o nome da playlist.");
-                        txtNome.requestFocus();
-                        return;
-                    }
+                        if (nome.isEmpty()) {
+                            JOptionPane.showMessageDialog(janela, "Preencha o nome da playlist.");
+                            return;
+                        }
 
-                    boolean existe = playlist.consultarPlaylist(id);
-                    boolean resultado;
-                    if (existe) {
-                        resultado = playlist.atualizarPlaylist(id, nome, descricao, data, estilo);
-                        JOptionPane.showMessageDialog(janela, resultado ? "Playlist atualizada com sucesso!" : "Erro ao atualizar.");
-                    } else {
-                        resultado = playlist.cadastrarPlaylist(nome, descricao, data, estilo);
-                        JOptionPane.showMessageDialog(janela, resultado ? "Playlist cadastrada com sucesso!" : "Erro ao cadastrar.");
+                        boolean existe = playlist.consultarPlaylist(id);
+                        boolean resultado;
+                        
+                        if (existe) {
+                            resultado = playlist.atualizarPlaylist(id, nome, descricao, data, estilo);
+                            JOptionPane.showMessageDialog(janela, 
+                                resultado ? "Playlist atualizada com sucesso!" : "Erro ao atualizar.");
+                        } else {
+                            resultado = playlist.cadastrarPlaylist(id, nome, descricao, data, estilo);
+                            JOptionPane.showMessageDialog(janela, 
+                                resultado ? "Playlist cadastrada com sucesso!" : "Erro ao cadastrar.");
+                        }
+                        
+                        if (resultado) {
+                            txtId.setEnabled(false);
+                        }
+                        
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(janela, "ID inválido. Digite um número inteiro.");
                     }
                 }
             }

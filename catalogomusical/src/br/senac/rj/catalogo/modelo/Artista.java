@@ -50,17 +50,25 @@ public class Artista {
     }
 
     // Método para cadastrar artista
-    public boolean cadastrarArtista(String nome, String nacionalidade, String generoMusical, String genero) {
+    public boolean cadastrarArtista(int id, String nome, String nacionalidade, String generoMusical, String genero) {
         Connection conexao = null;
         try {
             conexao = Conexao.conectaBanco();
-            String sql = "INSERT INTO artista (nome, nacionalidade, generomusical, genero) VALUES (?, ?, ?, ?)";
+            
+            // Verifique se o ID já existe
+            if (idExiste(id)) {
+                System.out.println("Erro: ID " + id + " já existe na base de dados");
+                return false;
+            }
+            
+            String sql = "INSERT INTO artista (id, nome, nacionalidade, generomusical, genero) VALUES (?, ?, ?, ?, ?)";
 
             PreparedStatement ps = conexao.prepareStatement(sql);
-            ps.setString(1, nome.trim());
-            ps.setString(2, nacionalidade.trim());
-            ps.setString(3, generoMusical.trim());
-            ps.setString(4, genero.trim());
+            ps.setInt(1, id);
+            ps.setString(2, nome.trim());
+            ps.setString(3, nacionalidade.trim());
+            ps.setString(4, generoMusical.trim());
+            ps.setString(5, genero.trim());
 
             int linhasAfetadas = ps.executeUpdate();
             return linhasAfetadas > 0;
@@ -68,6 +76,20 @@ public class Artista {
         } catch (SQLException erro) {
             System.out.println("Erro ao cadastrar artista: " + erro.toString());
             return false;
+        } finally {
+            Conexao.fechaConexao(conexao);
+        }
+    }
+
+    // Método auxiliar para verificar se ID existe
+    private boolean idExiste(int id) throws SQLException {
+        Connection conexao = Conexao.conectaBanco();
+        try {
+            String sql = "SELECT id FROM artista WHERE id = ?";
+            PreparedStatement ps = conexao.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
         } finally {
             Conexao.fechaConexao(conexao);
         }

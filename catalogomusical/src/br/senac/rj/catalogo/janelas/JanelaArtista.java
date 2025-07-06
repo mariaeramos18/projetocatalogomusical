@@ -82,7 +82,7 @@ public class JanelaArtista {
         botaoConsultar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int id = Integer.parseInt(jTextId.getText());
+                    int id = Integer.parseInt(jTextId.getText()); // Obtenha o ID do campo de texto
                     if (artista.consultarArtista(id)) {
                         jTextNome.setText(artista.getNome());
                         jTextNacionalidade.setText(artista.getNacionalidade());
@@ -132,7 +132,7 @@ public class JanelaArtista {
                     }
 
                     if (!artista.consultarArtista(id)) {
-                        if (artista.cadastrarArtista(nome, nacionalidade, generoMusical, genero))
+                        if (artista.cadastrarArtista(id, nome, nacionalidade, generoMusical, genero))
                             JOptionPane.showMessageDialog(janela, "Artista cadastrado com sucesso.");
                         else
                             JOptionPane.showMessageDialog(janela, "Erro ao cadastrar artista.");
