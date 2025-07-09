@@ -33,3 +33,82 @@ CREATE TABLE playlist (
     estilo VARCHAR(20)
 );
 
+
+-- Inserindo dados de artista
+INSERT INTO `artista`(
+    `id`,
+    `nome`,
+    `genero`,
+    `nacionalidade`,
+    `generomusical`
+)
+VALUES(
+    NULL,
+    'thiaguinho',
+    'Pagode',
+    'Brasileiro',
+    'pagode'
+),(
+    NULL,
+    'Belo',
+    'Pagode',
+    'Brasileiro',
+    'pagode'
+),(
+    NULL,
+    'Matuê',
+    'RAP',
+    'Brasileiro',
+    'rap'
+);
+
+
+-- Inserindo dados de musica
+INSERT INTO `musica`(
+    `id`,
+    `titulo`,
+    `duracao`,
+    `album`,
+    `artista`
+)
+VALUES(
+    NULL,
+    'Me Faz Feliz',
+    '00:37:40',
+    'Tardezinha',
+    'Thiaguinho'
+),(
+    NULL,
+    'Tatuagem',
+    '01:01:00',
+    'Mistério',
+    'Belo'
+),(
+    NULL,
+    'Maria',
+    '00:42:32',
+    '333',
+    'Matuê'
+);
+
+-- Inserindo dados de palylist
+INSERT INTO `playlist`(
+    `id`,
+    `nome`,
+    `descricao`,
+    `data_criacao`,
+    `estilo`
+)
+VALUES(
+    NULL,
+    'Minhas Favoritas',
+    'playlist favorita',
+    '2025-07-09',
+    'pagode'
+),(
+    NULL,
+    'Os Melhores Rap',
+    'O MELHOR RAPPER',
+    '2025-07-09',
+    'Rap'
+);
