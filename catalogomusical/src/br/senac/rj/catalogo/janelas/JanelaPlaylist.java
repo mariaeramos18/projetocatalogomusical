@@ -1,4 +1,4 @@
-package br.senac.rj.catalogo.janelas;
+ package br.senac.rj.catalogo.janelas;
 
 import br.senac.rj.catalogo.modelo.Playlist;
 
@@ -230,4 +230,3 @@ public class JanelaPlaylist {
         id.requestFocus();
     }
 }
-

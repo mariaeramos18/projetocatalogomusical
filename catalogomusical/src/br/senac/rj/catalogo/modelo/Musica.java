@@ -61,16 +61,17 @@ public class Musica {
     }
 
     // Método para cadastrar nova música
-    public boolean cadastrarMusica(String titulo, String duracao, String album, String artista) {
+    public boolean cadastrarMusica(int id, String titulo, String duracao, String album, String artista) {
         Connection conexao = null;
         try {
             conexao = Conexao.conectaBanco();
-            String sql = "INSERT INTO musica (titulo, duracao, album, artista) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO musica (id, titulo, duracao, album, artista) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = conexao.prepareStatement(sql);
-            ps.setString(1, titulo);
-            ps.setString(2, duracao);
-            ps.setString(3, album);
-            ps.setString(4, artista);
+            ps.setInt(1, id);
+            ps.setString(2, titulo);
+            ps.setString(3, duracao);
+            ps.setString(4, album);
+            ps.setString(5, artista);
 
             int registrosAfetados = ps.executeUpdate();
             return registrosAfetados > 0;
@@ -84,8 +85,8 @@ public class Musica {
     }
 
     // Método para atualizar música
-    public boolean atualizarMusica(int idMusica, String titulo, String duracao, String album, String artista) {
-        if (!consultarMusica(idMusica)) return false;
+    public boolean atualizarMusica(int id, String titulo, String duracao, String album, String artista) {
+        if (!consultarMusica(id)) return false;
 
         Connection conexao = null;
         try {
@@ -96,7 +97,7 @@ public class Musica {
             ps.setString(2, duracao);
             ps.setString(3, album);
             ps.setString(4, artista);
-            ps.setInt(5, idMusica);
+            ps.setInt(5, id);
 
             int registrosAfetados = ps.executeUpdate();
             return registrosAfetados > 0;
@@ -110,13 +111,13 @@ public class Musica {
     }
 
     // Método para excluir música
-    public boolean excluirMusica(int idMusica) {
+    public boolean excluirMusica(int id) {
         Connection conexao = null;
         try {
             conexao = Conexao.conectaBanco();
             String sql = "DELETE FROM musica WHERE id = ?";
             PreparedStatement ps = conexao.prepareStatement(sql);
-            ps.setInt(1, idMusica);
+            ps.setInt(1, id);
 
             int registrosAfetados = ps.executeUpdate();
             return registrosAfetados > 0;
