@@ -1,28 +1,35 @@
- package br.senac.rj.catalogo.janelas;
+package br.senac.rj.catalogo.janelas;
 
 import br.senac.rj.catalogo.modelo.Playlist;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class JanelaPlaylist {
+    private static JTextField txtId;
+    private static JTextField txtNome;
+    private static JTextField txtDescricao;
+    private static JTextField txtData;
+    private static JTextField txtEstilo;
+
+    private static JButton botaoConsultar;
+    private static JButton botaoGravar;
+    private static JButton botaoAtualizar;
+    private static JButton botaoExcluir;
+    private static JButton botaoLimpar;
 
     public static JFrame criarJanelaPlaylist() {
         JFrame janela = new JFrame("Cadastro de Playlist");
         janela.setSize(520, 330);
         janela.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         janela.setResizable(false);
-        Container caixa = janela.getContentPane();
-        caixa.setLayout(null);
+        janela.setLayout(null);
 
-        // Labels
-        JLabel labelId = new JLabel("ID:");
-        JLabel labelNome = new JLabel("Nome:");
+        JLabel labelId        = new JLabel("ID:");
+        JLabel labelNome      = new JLabel("Nome:");
         JLabel labelDescricao = new JLabel("Descrição:");
-        JLabel labelData = new JLabel("Data de Criação:");
-        JLabel labelEstilo = new JLabel("Estilo:");
+        JLabel labelData      = new JLabel("Data de Criação:");
+        JLabel labelEstilo    = new JLabel("Estilo:");
 
         labelId.setBounds(30, 30, 100, 20);
         labelNome.setBounds(30, 60, 100, 20);
@@ -30,12 +37,11 @@ public class JanelaPlaylist {
         labelData.setBounds(30, 120, 120, 20);
         labelEstilo.setBounds(30, 150, 100, 20);
 
-        // Campos de texto
-        JTextField txtId = new JTextField();
-        JTextField txtNome = new JTextField();
-        JTextField txtDescricao = new JTextField();
-        JTextField txtData = new JTextField();
-        JTextField txtEstilo = new JTextField();
+        txtId        = new JTextField();
+        txtNome      = new JTextField();
+        txtDescricao = new JTextField();
+        txtData      = new JTextField();
+        txtEstilo    = new JTextField();
 
         txtId.setBounds(160, 30, 50, 20);
         txtNome.setBounds(160, 60, 200, 20);
@@ -43,14 +49,11 @@ public class JanelaPlaylist {
         txtData.setBounds(160, 120, 100, 20);
         txtEstilo.setBounds(160, 150, 150, 20);
 
-        txtId.setEnabled(true);
-
-        // Botões
-        JButton botaoConsultar = new JButton("Consultar");
-        JButton botaoGravar = new JButton("Cadastrar");
-        JButton botaoAtualizar = new JButton("Atualizar");
-        JButton botaoExcluir = new JButton("Excluir");
-        JButton botaoLimpar = new JButton("Limpar");
+        botaoConsultar = new JButton("Consultar");
+        botaoGravar    = new JButton("Cadastrar");
+        botaoAtualizar = new JButton("Atualizar");
+        botaoExcluir   = new JButton("Excluir");
+        botaoLimpar    = new JButton("Limpar");
 
         botaoConsultar.setBounds(320, 30, 120, 25);
         botaoGravar.setBounds(20, 220, 100, 30);
@@ -62,7 +65,6 @@ public class JanelaPlaylist {
         botaoAtualizar.setEnabled(false);
         botaoExcluir.setEnabled(false);
 
-        // Adiciona tudo na janela
         janela.add(labelId);
         janela.add(labelNome);
         janela.add(labelDescricao);
@@ -81,152 +83,142 @@ public class JanelaPlaylist {
 
         Playlist playlist = new Playlist();
 
-        // CONSULTAR
-        botaoConsultar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int id = Integer.parseInt(txtId.getText());
-                    if (playlist.consultarPlaylist(id)) {
-                        txtNome.setText(playlist.getNome());
-                        txtDescricao.setText(playlist.getDescricao());
-                        txtData.setText(playlist.getDataCriacao());
-                        txtEstilo.setText(playlist.getEstilo());
+        botaoConsultar.addActionListener(e -> {
+            try {
+                int id = Integer.parseInt(txtId.getText());
+                if (playlist.consultarPlaylist(id)) {
+                    setCampos(
+                        playlist.getId(),
+                        playlist.getNome(),
+                        playlist.getDescricao(),
+                        playlist.getDataCriacao(),
+                        playlist.getEstilo()
+                    );
+                    JOptionPane.showMessageDialog(janela, "Playlist encontrada. Você pode atualizar ou excluir.");
+                } else {
+                    JOptionPane.showMessageDialog(janela, "Playlist não encontrada. Preencha para cadastrar.");
+                    resetarFormParaCadastro();
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(janela, "Informe um ID numérico válido.");
+            }
+        });
 
-                        botaoAtualizar.setEnabled(true);
-                        botaoExcluir.setEnabled(true);
-                        botaoGravar.setEnabled(false);
-                        txtId.setEnabled(false);
-                        JOptionPane.showMessageDialog(janela, "Playlist encontrada. Você pode atualizar ou excluir.");
+        botaoGravar.addActionListener(e -> {
+            try {
+                int id = Integer.parseInt(txtId.getText());
+                if (txtNome.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(janela, "Preencha o nome da playlist.");
+                    return;
+                }
+                if (playlist.cadastrarPlaylist(
+                    id,
+                    txtNome.getText(),
+                    txtDescricao.getText(),
+                    txtData.getText(),
+                    txtEstilo.getText()
+                )) {
+                    JOptionPane.showMessageDialog(janela, "Playlist cadastrada com sucesso!");
+                    botaoAtualizar.setEnabled(true);
+                    botaoExcluir.setEnabled(true);
+                    botaoGravar.setEnabled(false);
+                } else {
+                    JOptionPane.showMessageDialog(janela, "Erro ao cadastrar a playlist.");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(janela, "ID inválido. Digite um número inteiro.");
+            }
+        });
+
+        botaoAtualizar.addActionListener(e -> {
+            try {
+                int id = Integer.parseInt(txtId.getText());
+                if (JOptionPane.showConfirmDialog(janela,
+                    "Confirmar atualização da playlist?", "Confirmação", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (playlist.atualizarPlaylist(
+                        id,
+                        txtNome.getText(),
+                        txtDescricao.getText(),
+                        txtData.getText(),
+                        txtEstilo.getText()
+                    )) {
+                        JOptionPane.showMessageDialog(janela, "Playlist atualizada com sucesso!");
                     } else {
-                        JOptionPane.showMessageDialog(janela, "Playlist não encontrada. Preencha os dados para cadastrar.");
-                        botaoGravar.setEnabled(true);
-                        botaoAtualizar.setEnabled(false);
-                        botaoExcluir.setEnabled(false);
+                        JOptionPane.showMessageDialog(janela, "Erro ao atualizar a playlist.");
                     }
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(janela, "ID inválido.");
+            }
+        });
 
-                    txtNome.setEnabled(true);
-                    txtDescricao.setEnabled(true);
-                    txtData.setEnabled(true);
-                    txtEstilo.setEnabled(true);
-                    txtNome.requestFocus();
-
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(janela, "Informe um ID numérico válido.");
+        botaoExcluir.addActionListener(e -> {
+            if (JOptionPane.showConfirmDialog(janela,
+                "Deseja realmente excluir esta playlist?", "Confirmação", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                int id = Integer.parseInt(txtId.getText());
+                if (playlist.excluirPlaylist(id)) {
+                    JOptionPane.showMessageDialog(janela, "Playlist excluída com sucesso.");
+                    resetarForm();
+                } else {
+                    JOptionPane.showMessageDialog(janela, "Erro ao excluir a playlist.");
                 }
             }
         });
 
-        // CADASTRAR
-        botaoGravar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int id = Integer.parseInt(txtId.getText());
-                    String nome = txtNome.getText().trim();
-                    String descricao = txtDescricao.getText().trim();
-                    String data = txtData.getText().trim();
-                    String estilo = txtEstilo.getText().trim();
-
-                    if (nome.isEmpty()) {
-                        JOptionPane.showMessageDialog(janela, "Preencha o nome da playlist.");
-                        return;
-                    }
-
-                    boolean resultado = playlist.cadastrarPlaylist(id, nome, descricao, data, estilo);
-
-                    if (resultado) {
-                        JOptionPane.showMessageDialog(janela, "Playlist cadastrada com sucesso!");
-                        txtId.setEnabled(false);
-                        botaoGravar.setEnabled(false);
-                        botaoAtualizar.setEnabled(true);
-                        botaoExcluir.setEnabled(true);
-                    } else {
-                        JOptionPane.showMessageDialog(janela, "Erro ao cadastrar a playlist.");
-                    }
-
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(janela, "ID inválido. Digite um número inteiro.");
-                }
-            }
-        });
-
-        // ATUALIZAR
-        botaoAtualizar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int id = Integer.parseInt(txtId.getText());
-                    String nome = txtNome.getText().trim();
-                    String descricao = txtDescricao.getText().trim();
-                    String data = txtData.getText().trim();
-                    String estilo = txtEstilo.getText().trim();
-
-                    int resposta = JOptionPane.showConfirmDialog(janela,
-                            "Confirmar atualização da playlist?", "Confirmação", JOptionPane.YES_NO_OPTION);
-
-                    if (resposta == JOptionPane.YES_OPTION) {
-                        boolean resultado = playlist.atualizarPlaylist(id, nome, descricao, data, estilo);
-                        if (resultado) {
-                            JOptionPane.showMessageDialog(janela, "Playlist atualizada com sucesso!");
-                        } else {
-                            JOptionPane.showMessageDialog(janela, "Erro ao atualizar a playlist.");
-                        }
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(janela, "ID inválido.");
-                }
-            }
-        });
-
-        // EXCLUIR
-        botaoExcluir.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int resposta = JOptionPane.showConfirmDialog(janela,
-                        "Deseja realmente excluir esta playlist?", "Confirmação", JOptionPane.YES_NO_OPTION);
-
-                if (resposta == JOptionPane.YES_OPTION) {
-                    int id = Integer.parseInt(txtId.getText());
-                    if (playlist.excluirPlaylist(id)) {
-                        JOptionPane.showMessageDialog(janela, "Playlist excluída com sucesso.");
-                        limparCampos(txtId, txtNome, txtDescricao, txtData, txtEstilo,
-                                botaoConsultar, botaoGravar, botaoAtualizar, botaoExcluir);
-                    } else {
-                        JOptionPane.showMessageDialog(janela, "Erro ao excluir a playlist.");
-                    }
-                }
-            }
-        });
-
-        // LIMPAR
-        botaoLimpar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                limparCampos(txtId, txtNome, txtDescricao, txtData, txtEstilo,
-                        botaoConsultar, botaoGravar, botaoAtualizar, botaoExcluir);
-            }
-        });
+        botaoLimpar.addActionListener(e -> resetarForm());
 
         return janela;
     }
 
-    // Método auxiliar para limpar
-    private static void limparCampos(JTextField id, JTextField nome, JTextField descricao,
-                                     JTextField data, JTextField estilo,
-                                     JButton consultar, JButton gravar, JButton atualizar, JButton excluir) {
-        id.setText("");
-        nome.setText("");
-        descricao.setText("");
-        data.setText("");
-        estilo.setText("");
+    public static void setCampos(int id, String nome, String descricao, String data, String estilo) {
+        txtId.setText(String.valueOf(id));
+        txtNome.setText(nome);
+        txtDescricao.setText(descricao);
+        txtData.setText(data);
+        txtEstilo.setText(estilo);
 
-        id.setEnabled(true);
-        nome.setEnabled(false);
-        descricao.setEnabled(false);
-        data.setEnabled(false);
-        estilo.setEnabled(false);
+        txtId.setEnabled(false);
+        habilitarEdicao(true);
 
-        consultar.setEnabled(true);
-        gravar.setEnabled(false);
-        atualizar.setEnabled(false);
-        excluir.setEnabled(false);
+        botaoConsultar.setEnabled(false);
+        botaoGravar.setEnabled(false);
+        botaoAtualizar.setEnabled(true);
+        botaoExcluir.setEnabled(true);
+    }
 
-        id.requestFocus();
+    private static void resetarFormParaCadastro() {
+        habilitarEdicao(true);
+        txtId.setEnabled(true);
+        botaoConsultar.setEnabled(false);
+        botaoGravar.setEnabled(true);
+        botaoAtualizar.setEnabled(false);
+        botaoExcluir.setEnabled(false);
+    }
+
+    private static void resetarForm() {
+        txtId.setText("");
+        txtNome.setText("");
+        txtDescricao.setText("");
+        txtData.setText("");
+        txtEstilo.setText("");
+
+        txtId.setEnabled(true);
+        habilitarEdicao(false);
+
+        botaoConsultar.setEnabled(true);
+        botaoGravar.setEnabled(false);
+        botaoAtualizar.setEnabled(false);
+        botaoExcluir.setEnabled(false);
+    }
+
+    private static void habilitarEdicao(boolean habilitar) {
+        txtNome.setEnabled(habilitar);
+        txtDescricao.setEnabled(habilitar);
+        txtData.setEnabled(habilitar);
+        txtEstilo.setEnabled(habilitar);
+    }
+
+    private static void limparCampos(JTextField... campos) {
+        for (JTextField campo : campos) campo.setText("");
     }
 }
