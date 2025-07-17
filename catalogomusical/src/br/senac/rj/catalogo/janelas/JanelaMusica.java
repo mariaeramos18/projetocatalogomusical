@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 
 public class JanelaMusica {
     public static JFrame criarJanelaMusica() {
-        JFrame janela = new JFrame("Gerenciamento de Musicas:");
+        JFrame janela = new JFrame("Gerenciamento de Músicas:");
         janela.setResizable(false);
         janela.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         janela.setSize(500, 350);
@@ -18,7 +18,7 @@ public class JanelaMusica {
 
         // Labels
         JLabel labelId = new JLabel("ID:");
-        JLabel labelTitulo = new JLabel("Titulo:");
+        JLabel labelTitulo = new JLabel("Título:");
         JLabel labelDuracao = new JLabel("Duração:");
         JLabel labelAlbum = new JLabel("Álbum:");
         JLabel labelArtista = new JLabel("Artista:");
@@ -55,10 +55,11 @@ public class JanelaMusica {
         botaoExcluir.setBounds(250, 220, 100, 30);
         botaoLimpar.setBounds(360, 220, 100, 30);
 
-        // Estado inicial dos botões
+        // Estado inicial
         botaoCadastrar.setEnabled(false);
         botaoAtualizar.setEnabled(false);
         botaoExcluir.setEnabled(false);
+        habilitarCampos(false, jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista);
 
         // Adiciona componentes
         janela.add(labelId);
@@ -79,7 +80,6 @@ public class JanelaMusica {
         janela.add(botaoExcluir);
         janela.add(botaoLimpar);
 
-        // Objeto musica
         Musica musica = new Musica();
 
         // CONSULTAR
@@ -96,19 +96,18 @@ public class JanelaMusica {
                         botaoAtualizar.setEnabled(true);
                         botaoExcluir.setEnabled(true);
                         botaoCadastrar.setEnabled(false);
-                        botaoLimpar.setEnabled(true);
                         habilitarCampos(true, jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista);
                         jTextId.setEnabled(false);
                     } else {
-                        JOptionPane.showMessageDialog(janela, "Música não encontrado. Preencha os dados para cadastrar.");
+                        JOptionPane.showMessageDialog(janela, "Música não encontrada. Preencha os dados para cadastrar.");
                         limparCampos(jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista);
                         botaoCadastrar.setEnabled(true);
                         botaoAtualizar.setEnabled(false);
                         botaoExcluir.setEnabled(false);
-                        botaoLimpar.setEnabled(true);
                         habilitarCampos(true, jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista);
                     }
                     botaoConsultar.setEnabled(false);
+                    botaoLimpar.setEnabled(true);
                     jTextTitulo.requestFocus();
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(janela, "ID inválido. Digite um número inteiro.");
@@ -119,25 +118,26 @@ public class JanelaMusica {
         // CADASTRAR
         botaoCadastrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (validarCampos()) {
+                if (validarCampos(jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista)) {
                     int resposta = JOptionPane.showConfirmDialog(janela,
-                            "Confirmar cadastro deste música?", "Confirmação", JOptionPane.YES_NO_OPTION);
-
+                            "Confirmar cadastro desta música?", "Confirmação", JOptionPane.YES_NO_OPTION);
                     if (resposta == JOptionPane.YES_OPTION) {
                         int id = Integer.parseInt(jTextId.getText());
-                        String nome = jTextTitulo.getText().trim();
-                        String nacionalidade = jTextDuracao.getText().trim();
-                        String generoMusical = jTextAlbum.getText().trim();
-                        String genero = jTextArtista.getText().trim();
+                        String titulo = jTextTitulo.getText().trim();
+                        String duracao = jTextDuracao.getText().trim();
+                        String album = jTextAlbum.getText().trim();
+                        String artista = jTextArtista.getText().trim();
 
-                        if (musica.cadastrarMusica(id, nome, nacionalidade, generoMusical, genero)) {
-                            JOptionPane.showMessageDialog(janela, "Música cadastrado com sucesso!");
+                        if (musica.cadastrarMusica(id, titulo, duracao, album, artista)) {
+                            JOptionPane.showMessageDialog(janela, "Música cadastrada com sucesso!");
                             limparTudo(jTextId, jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista,
                                     botaoConsultar, botaoCadastrar, botaoAtualizar, botaoExcluir);
                         } else {
-                            JOptionPane.showMessageDialog(janela, "Falha ao cadastrar música.");
+                            JOptionPane.showMessageDialog(janela, "Erro ao cadastrar música.");
                         }
                     }
+                } else {
+                    JOptionPane.showMessageDialog(janela, "Preencha todos os campos corretamente.");
                 }
             }
         });
@@ -145,25 +145,26 @@ public class JanelaMusica {
         // ATUALIZAR
         botaoAtualizar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (validarCampos()) {
+                if (validarCampos(jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista)) {
                     int resposta = JOptionPane.showConfirmDialog(janela,
-                            "Confirmar atualização deste música?", "Confirmação", JOptionPane.YES_NO_OPTION);
-
+                            "Confirmar atualização desta música?", "Confirmação", JOptionPane.YES_NO_OPTION);
                     if (resposta == JOptionPane.YES_OPTION) {
                         int id = Integer.parseInt(jTextId.getText());
-                        String nome = jTextTitulo.getText().trim();
-                        String nacionalidade = jTextDuracao.getText().trim();
-                        String generoMusical = jTextAlbum.getText().trim();
-                        String genero = jTextArtista.getText().trim();
+                        String titulo = jTextTitulo.getText().trim();
+                        String duracao = jTextDuracao.getText().trim();
+                        String album = jTextAlbum.getText().trim();
+                        String artista = jTextArtista.getText().trim();
 
-                        if (musica.atualizarMusica(id, nome, nacionalidade, generoMusical, genero)) {
-                            JOptionPane.showMessageDialog(janela, "Música atualizado com sucesso!");
+                        if (musica.atualizarMusica(id, titulo, duracao, album, artista)) {
+                            JOptionPane.showMessageDialog(janela, "Música atualizada com sucesso!");
                             limparTudo(jTextId, jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista,
                                     botaoConsultar, botaoCadastrar, botaoAtualizar, botaoExcluir);
                         } else {
-                            JOptionPane.showMessageDialog(janela, "Falha ao atualizar musica.");
+                            JOptionPane.showMessageDialog(janela, "Erro ao atualizar música.");
                         }
                     }
+                } else {
+                    JOptionPane.showMessageDialog(janela, "Preencha todos os campos corretamente.");
                 }
             }
         });
@@ -172,16 +173,16 @@ public class JanelaMusica {
         botaoExcluir.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int resposta = JOptionPane.showConfirmDialog(janela,
-                        "Confirmar exclusão deste música?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                        "Confirmar exclusão desta música?", "Confirmação", JOptionPane.YES_NO_OPTION);
 
                 if (resposta == JOptionPane.YES_OPTION) {
                     int id = Integer.parseInt(jTextId.getText());
                     if (musica.excluirMusica(id)) {
-                        JOptionPane.showMessageDialog(janela, "Música excluído com sucesso!");
+                        JOptionPane.showMessageDialog(janela, "Música excluída com sucesso!");
                         limparTudo(jTextId, jTextTitulo, jTextDuracao, jTextAlbum, jTextArtista,
                                 botaoConsultar, botaoCadastrar, botaoAtualizar, botaoExcluir);
                     } else {
-                        JOptionPane.showMessageDialog(janela, "Falha ao excluir musica.");
+                        JOptionPane.showMessageDialog(janela, "Erro ao excluir música.");
                     }
                 }
             }
@@ -199,36 +200,33 @@ public class JanelaMusica {
     }
 
     // Métodos auxiliares
-    private static void limparCampos(JTextField nome, JTextField nacionalidade,
-                                     JTextField generoMusical, JTextField genero) {
-        nome.setText("");
-        nacionalidade.setText("");
-        generoMusical.setText("");
-        genero.setText("");
+    private static void limparCampos(JTextField titulo, JTextField duracao,
+                                     JTextField album, JTextField artista) {
+        titulo.setText("");
+        duracao.setText("");
+        album.setText("");
+        artista.setText("");
     }
 
-    private static void habilitarCampos(boolean habilitar, JTextField nome, JTextField nacionalidade,
-                                        JTextField generoMusical, JTextField genero) {
-        nome.setEnabled(habilitar);
-        nacionalidade.setEnabled(habilitar);
-        generoMusical.setEnabled(habilitar);
-        genero.setEnabled(habilitar);
+    private static void habilitarCampos(boolean habilitar, JTextField titulo, JTextField duracao,
+                                        JTextField album, JTextField artista) {
+        titulo.setEnabled(habilitar);
+        duracao.setEnabled(habilitar);
+        album.setEnabled(habilitar);
+        artista.setEnabled(habilitar);
     }
 
-    private static void limparTudo(JTextField id, JTextField nome, JTextField nacionalidade,
-                                   JTextField generoMusical, JTextField genero,
+    private static void limparTudo(JTextField id, JTextField titulo, JTextField duracao,
+                                   JTextField album, JTextField artista,
                                    JButton consultar, JButton cadastrar, JButton atualizar, JButton excluir) {
         id.setText("");
-        nome.setText("");
-        nacionalidade.setText("");
-        generoMusical.setText("");
-        genero.setText("");
+        titulo.setText("");
+        duracao.setText("");
+        album.setText("");
+        artista.setText("");
 
         id.setEnabled(true);
-        nome.setEnabled(false);
-        nacionalidade.setEnabled(false);
-        generoMusical.setEnabled(false);
-        genero.setEnabled(false);
+        habilitarCampos(false, titulo, duracao, album, artista);
 
         consultar.setEnabled(true);
         cadastrar.setEnabled(false);
@@ -238,8 +236,11 @@ public class JanelaMusica {
         id.requestFocus();
     }
 
-    private static boolean validarCampos() {
-        // Aqui você pode adicionar validações reais no futuro
-        return true;
+    private static boolean validarCampos(JTextField titulo, JTextField duracao,
+                                         JTextField album, JTextField artista) {
+        return !titulo.getText().trim().isEmpty() &&
+               !duracao.getText().trim().isEmpty() &&
+               !album.getText().trim().isEmpty() &&
+               !artista.getText().trim().isEmpty();
     }
 }
